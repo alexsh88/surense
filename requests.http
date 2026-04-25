@@ -1,0 +1,171 @@
+### Variables — set these before running
+@baseUrl = http://localhost:8080
+@adminUsername = admin@surense.com
+@adminPassword = Admin@1234
+@accessToken = <paste token from login response>
+@refreshToken = <paste refresh_token from login response>
+
+### ── AUTH ─────────────────────────────────────────────────────────────────
+
+### Login (returns access_token + refresh_token)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{adminUsername}}",
+  "password": "{{adminPassword}}"
+}
+
+### Refresh access token
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### Logout (revokes refresh token)
+POST {{baseUrl}}/auth/logout
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### ── AGENTS ────────────────────────────────────────────────────────────────
+
+### Get own agent profile (AGENT only)
+GET {{baseUrl}}/api/v1/agents/me
+Authorization: Bearer {{accessToken}}
+
+### Update own agent profile (AGENT only)
+PATCH {{baseUrl}}/api/v1/agents/me
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "fullName": "Updated Name"
+}
+
+### Create agent (ADMIN only)
+POST {{baseUrl}}/api/v1/agents
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "username": "agent@example.com",
+  "password": "Pass@word1",
+  "fullName": "Alice Agent"
+}
+
+### List all agents (ADMIN only)
+GET {{baseUrl}}/api/v1/agents
+Authorization: Bearer {{accessToken}}
+
+### Update any agent (ADMIN only)
+PATCH {{baseUrl}}/api/v1/agents/<agent-id>
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "fullName": "Updated Agent Name",
+  "active": true
+}
+
+### ── CUSTOMERS ──────────────────────────────────────────────────────────────
+
+### Create customer (AGENT: auto-assigned; ADMIN: must supply agentId)
+POST {{baseUrl}}/api/v1/customers
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "username": "customer@example.com",
+  "password": "Pass@word1",
+  "fullName": "Bob Customer"
+}
+
+### List customers (AGENT sees own; ADMIN sees all)
+GET {{baseUrl}}/api/v1/customers
+Authorization: Bearer {{accessToken}}
+
+### Get own customer profile (CUSTOMER only)
+GET {{baseUrl}}/api/v1/customers/me
+Authorization: Bearer {{accessToken}}
+
+### Update own customer profile (CUSTOMER only)
+PATCH {{baseUrl}}/api/v1/customers/me
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "fullName": "Updated Name"
+}
+
+### Get customer by ID (ADMIN or owning AGENT)
+GET {{baseUrl}}/api/v1/customers/<customer-id>
+Authorization: Bearer {{accessToken}}
+
+### Update any customer (ADMIN only)
+PATCH {{baseUrl}}/api/v1/customers/<customer-id>
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "fullName": "Updated Customer Name",
+  "active": true
+}
+
+### ── TICKETS ────────────────────────────────────────────────────────────────
+
+### Create ticket (CUSTOMER only)
+POST {{baseUrl}}/api/v1/tickets
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "title": "Cannot log in",
+  "description": "I keep getting 401 when I try to sign in.",
+  "priority": "HIGH"
+}
+
+### List tickets (CUSTOMER sees own; AGENT sees customers'; ADMIN sees all)
+GET {{baseUrl}}/api/v1/tickets
+Authorization: Bearer {{accessToken}}
+
+### List tickets — filter by status and/or priority
+GET {{baseUrl}}/api/v1/tickets?status=OPEN&priority=HIGH
+Authorization: Bearer {{accessToken}}
+
+### List tickets — filter by customer ID
+GET {{baseUrl}}/api/v1/tickets?customerId=<customer-id>
+Authorization: Bearer {{accessToken}}
+
+### Get ticket by ID (ADMIN or ownership)
+GET {{baseUrl}}/api/v1/tickets/<ticket-id>
+Authorization: Bearer {{accessToken}}
+
+### Update ticket status (ADMIN or owning AGENT)
+PATCH {{baseUrl}}/api/v1/tickets/<ticket-id>
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "status": "IN_PROGRESS"
+}
+
+### ── ACTUATOR ───────────────────────────────────────────────────────────────
+
+### Liveness probe (public)
+GET {{baseUrl}}/actuator/health/liveness
+
+### Readiness probe (public — checks DB)
+GET {{baseUrl}}/actuator/health/readiness
+
+### Metrics (ADMIN only)
+GET {{baseUrl}}/actuator/metrics
+Authorization: Bearer {{accessToken}}
+
+### Info (ADMIN only)
+GET {{baseUrl}}/actuator/info
+Authorization: Bearer {{accessToken}}
