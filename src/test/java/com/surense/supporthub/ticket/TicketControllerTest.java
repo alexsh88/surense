@@ -76,7 +76,7 @@ class TicketControllerTest {
                         .with(authentication(customerAuth()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateTicketRequest("Login issue", "Can't login", TicketPriority.HIGH))))
+                                new CreateTicketRequest("Login issue", "Can't login", TicketPriority.HIGH, null))))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(TICKET_ID.toString()))
                 .andExpect(jsonPath("$.status").value("OPEN"));
@@ -88,7 +88,7 @@ class TicketControllerTest {
                         .with(authentication(customerAuth()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateTicketRequest("", "Desc", null))))
+                                new CreateTicketRequest("", "Desc", null, null))))
                 .andExpect(status().isBadRequest());
     }
 

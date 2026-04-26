@@ -52,7 +52,7 @@ class TicketServiceTest {
 
         AppUserPrincipal principal = new AppUserPrincipal(CUSTOMER_ID, "carol", null, Role.CUSTOMER, null, true);
         TicketResponse resp = ticketService.createTicket(
-                new CreateTicketRequest("Login issue", "Can't login", TicketPriority.HIGH), principal);
+                new CreateTicketRequest("Login issue", "Can't login", TicketPriority.HIGH, null), principal);
 
         assertThat(resp.title()).isEqualTo("Login issue");
         assertThat(resp.priority()).isEqualTo(TicketPriority.HIGH);
@@ -64,7 +64,7 @@ class TicketServiceTest {
         AppUserPrincipal principal = new AppUserPrincipal(CUSTOMER_ID, "carol", null, Role.CUSTOMER, null, true);
 
         assertThatThrownBy(() -> ticketService.createTicket(
-                new CreateTicketRequest("Title", "Desc", null), principal))
+                new CreateTicketRequest("Title", "Desc", null, null), principal))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
