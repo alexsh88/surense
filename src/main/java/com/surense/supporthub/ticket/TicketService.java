@@ -31,10 +31,16 @@ public class TicketService {
     private final TicketMapper ticketMapper;
 
     @Transactional
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('ADMIN')")
     public TicketResponse createTicket(CreateTicketRequest req, AppUserPrincipal principal) {
-        User customer = userRepository.findById(principal.userId())
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found: " + principal.userId()));
+        UUID customerId = principal.role() == com.surense.supporthub.user.domain.Role.ADMIN
+                ? req.customerId()
+                : principal.userId();
+        if (customerId == null) {
+            throw new IllegalArgumentException("customerId is required when creating a ticket as ADMIN.");
+        }
+        User customer = userRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found: " + customerId));
         Ticket ticket = ticketMapper.toEntity(req);
         ticket.setCustomer(customer);
         if (req.priority() == null) {

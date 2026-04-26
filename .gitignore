@@ -31,6 +31,10 @@ src/test/java/**/ApiSmokeTest.java
 CLAUDE.md
 CONTINUATION.md
 GUIDE.md
+GUIDE2.md
 
 # Stale exported API spec (live spec served at /v3/api-docs)
 surense-api.json
+
+# Local-only React UI (not part of the assignment deliverable)
+surense-ui/
